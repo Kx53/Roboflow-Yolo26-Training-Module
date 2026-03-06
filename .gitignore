@@ -1,0 +1,25 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Dataset (download ใหม่ได้จาก download_data.py)
+Dog-face-detection-7/
+
+# Training outputs
+runs/
+
+# Cache files
+*.cache
+
+# Environment variables
+.env
+
+# YOLO26
+yolo26n.pt
