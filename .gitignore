@@ -10,7 +10,7 @@ wheels/
 .venv
 
 # Dataset (download ใหม่ได้จาก download_data.py)
-Dog-face-detection-7/
+Dog-face-detection-8/
 
 # Training outputs
 runs/
@@ -23,3 +23,5 @@ runs/
 
 # YOLO26
 yolo26n.pt
+
+3-5-69.md

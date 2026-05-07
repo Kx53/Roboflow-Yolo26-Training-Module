@@ -11,18 +11,24 @@ def train_model():
 
     # เทรนเลย ใช้ template จาก Ultralytics Docs เอา
     model.train(
-        data="/home/awesome/training-module/Dog-face-detection-7/data.yaml", # Path จากโฟลเดอร์ที่โหลด Roboflow มา
+        data="/home/awesome/training-module/Dog-face-detection-8/data.yaml", # Path จากโฟลเดอร์ที่โหลด Roboflow มา
         epochs=150,
         imgsz=640,
         device=device,
-        batch=-1,
+        batch = 16 if device == "mps" else -1,
         patience=50,       # Early Stopping: ถ้าเทรนไป 50 รอบแล้วไม่ดีขึ้น ให้หยุดเทรนเพื่อกัน Overfitting
-        augment=True,      # เปิด Augmentation (ช่วยให้โมเดลเรียนรู้ได้ดีขึ้น)
-        optimizer='AdamW', # มาตรฐานปี 2026 ให้ความแม่นยำสูงกว่า SGD ในงาน Detect สัตว์เลี้ยง
+        optimizer='auto',
+        lr0=0.001,           # lr ต่ำสำหรับ fine-tune
+        cos_lr=True,         # Cosine LR schedule
+        close_mosaic=10,     # ปิด mosaic 10 epoch สุดท้าย (YOLO26 default)
         hsv_h=0.015,       # ปรับจูนสี (กันเรื่องแสงเปลี่ยนในจานข้าว)
         hsv_s=0.7,
         hsv_v=0.4,
-        plots=True         # สร้างกราฟไว้ใส่เล่มโปรเจค
+        seed=0,              # reproducible
+        deterministic=True,
+        plots=True,         # สร้างกราฟไว้ใส่เล่มโปรเจค
+        project='runs/pet_feeder',
+        name='yolo26n_v1',
     )
 
 if __name__ == "__main__":
