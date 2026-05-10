@@ -48,6 +48,8 @@ python download_data.py
 
 สคริปต์จะดึงข้อมูลจากโปรเจค `dog-face-detection-0uxs8` ในรูปแบบ YOLO26 และบันทึกลงในโฟลเดอร์ `Dog-face-detection-X` โดยอัตโนมัติ
 
+> Dataset (`Dog-face-detection-*`) ไม่ถูก commit ขึ้น GitHub ให้ดาวน์โหลดใหม่ด้วย `download_data.py` เมื่อต้องการเทรนซ้ำ
+
 ---
 
 ## 3. Training Process
@@ -75,17 +77,17 @@ python train.py
 
 ---
 
-## 4. Latest Training Results (6 พ.ค. 2569)
+## 4. Latest Training Results (9 พ.ค. 2569)
 
 ผลลัพธ์ล่าสุดจากการเทรนเวอร์ชัน `yolo26n_v1`:
 
-- **mAP50**: 0.977 (ความแม่นยำสูงมาก)
-- **mAP50-95**: 0.882
+- **mAP50**: 0.985 (ความแม่นยำสูงมาก)
+- **mAP50-95**: 0.892
 - **Performance by Class**:
-  - `bowl_empty`: 0.995 mAP50
+  - `bowl_empty`: 0.993 mAP50
   - `bowl_full`: 0.995 mAP50
-  - `yuri-dog`: 0.941 mAP50
-- **Inference Speed**: ~1.0ms (บน RTX 5060 Ti)
+  - `yuri-dog`: 0.968 mAP50
+- **Inference Speed**: ~1.6ms (บน RTX 5060 Ti)
 
 ---
 
@@ -107,7 +109,7 @@ python -c "from train import export_to_onnx; export_to_onnx()"
 ```python
 from ultralytics import YOLO
 
-model = YOLO("runs/pet_feeder/yolo26n_v1/weights/best.pt")
+model = YOLO("runs/detect/runs/pet_feeder/yolo26n_v1/weights/best.pt")
 model.export(
     format="onnx",
     imgsz=640,
@@ -149,8 +151,7 @@ import onnxruntime as ort
 import numpy as np
 import cv2
 
-CLASSES = ["dog_yuri", "dog_makham", "unknown",
-           "food_full", "food_low", "food_empty"]
+CLASSES = ["bowl_empty", "bowl_full", "yuri-dog"]
 CONF_THRESHOLD = 0.25
 INPUT_SIZE = 640
 
@@ -221,8 +222,8 @@ NCNN และ format อื่นบางตัว (RKNN, PaddlePaddle, ExecuT
 
 - `train.py`: สคริปต์หลัก — มี `train_model()` และ `export_to_onnx()`
 - `download_data.py`: สคริปต์ดึง Dataset จาก Roboflow
-- `yolo26n.pt`: Pre-trained weight เริ่มต้น
-- `runs/pet_feeder/yolo26n_v1/`: ผลลัพธ์การเทรน (weights, charts, confusion matrix)
+- `Dog-face-detection-*`: Dataset ที่โหลดในเครื่องเท่านั้น (ไม่ commit ขึ้น GitHub)
+- `runs/detect/runs/pet_feeder/yolo26n_v1/`: ผลลัพธ์การเทรน (weights, charts, confusion matrix)
   - `weights/best.pt`: Best checkpoint สำหรับ export
   - `weights/best.onnx`: ONNX end2end (สร้างจาก `export_to_onnx()`)
-- `.env`: ไฟล์เก็บความลับ (API Keys)
+- `.env`: ไฟล์เก็บความลับ (API Keys, ไม่ commit ขึ้น GitHub)

@@ -1,5 +1,11 @@
 from ultralytics import YOLO
 import torch
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parent
+DATA_YAML = ROOT / "Dog-face-detection-9" / "data.yaml"
+BEST_WEIGHTS = ROOT / "runs" / "detect" / "runs" / "pet_feeder" / "yolo26n_v1" / "weights" / "best.pt"
 
 
 def get_device():
@@ -26,7 +32,7 @@ def train_model():
 
     # เทรนตาม YOLO26 fine-tuning recipe (พร้อมส่งต่อไป ONNX end2end export)
     model.train(
-        data="/home/awesome/training-module/Dog-face-detection-8/data.yaml",  # Path จากโฟลเดอร์ที่โหลด Roboflow มา
+        data=str(DATA_YAML),  # Path จากโฟลเดอร์ที่โหลด Roboflow มา
         epochs=150,
         imgsz=640,           # ต้องตรงกับ ONNX input [1, 3, 640, 640]
         device=device,
@@ -48,7 +54,7 @@ def train_model():
 
 
 def export_to_onnx(
-    weights_path: str = "runs/pet_feeder/yolo26n_v1/weights/best.pt",
+    weights_path: str | Path = BEST_WEIGHTS,
     imgsz: int = 640,
     device: str = "cpu",
 ):
@@ -72,7 +78,7 @@ def export_to_onnx(
     Returns:
         path ของไฟล์ .onnx ที่ export แล้ว
     """
-    model = YOLO(weights_path)
+    model = YOLO(str(weights_path))
     return model.export(
         format="onnx",
         imgsz=imgsz,

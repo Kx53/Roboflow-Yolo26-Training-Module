@@ -7,13 +7,10 @@ wheels/
 *.egg-info
 
 # Virtual environments
-.venv
+.venv/
 
-# Dataset (download ใหม่ได้จาก download_data.py)
-Dog-face-detection-8/
-
-# Training outputs
-runs/
+# Datasets (download ใหม่ได้จาก download_data.py)
+Dog-face-detection-*/
 
 # Cache files
 *.cache
@@ -21,7 +18,7 @@ runs/
 # Environment variables
 .env
 
-# YOLO26
+# YOLO26 base pretrained weight (ผลเทรนจริงอยู่ใน runs/)
 yolo26n.pt
 
 3-5-69.md
