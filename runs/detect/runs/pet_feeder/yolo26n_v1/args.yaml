@@ -1,7 +1,7 @@
 task: detect
 mode: train
 model: yolo26n.pt
-data: /home/awesome/training-module/Dog-face-detection-9/data.yaml
+data: /home/awesome/training-module/Dog-face-detection-10/data.yaml
 epochs: 150
 time: null
 patience: 50
@@ -16,7 +16,7 @@ project: runs/pet_feeder
 name: yolo26n_v1
 exist_ok: false
 pretrained: true
-optimizer: auto
+optimizer: MuSGD
 verbose: true
 seed: 0
 deterministic: true

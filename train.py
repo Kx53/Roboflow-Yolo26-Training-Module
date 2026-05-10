@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent
-DATA_YAML = ROOT / "Dog-face-detection-9" / "data.yaml"
+DATA_YAML = ROOT / "Dog-face-detection-10" / "data.yaml"
 BEST_WEIGHTS = ROOT / "runs" / "detect" / "runs" / "pet_feeder" / "yolo26n_v1" / "weights" / "best.pt"
 
 
@@ -38,7 +38,7 @@ def train_model():
         device=device,
         batch=batch,
         patience=50,         # Early Stopping: ถ้าเทรนไป 50 รอบแล้วไม่ดีขึ้น ให้หยุดเทรนเพื่อกัน Overfitting
-        optimizer='auto',    # auto เลือก MuSGD (YOLO26 native) หรือ AdamW ตามขนาด run
+        optimizer='MuSGD',   # auto เลือก MuSGD (YOLO26 native) หรือ AdamW ตามขนาด run
         lr0=0.001,           # lr ต่ำสำหรับ fine-tune (ป้องกันทำลาย pretrained weights)
         cos_lr=True,         # Cosine LR schedule
         close_mosaic=10,     # ปิด mosaic 10 epoch สุดท้าย (YOLO26 default)

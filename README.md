@@ -20,7 +20,7 @@ uv sync
 - **Core**: `ultralytics` (YOLO26)
 - **Data**: `roboflow`, `python-dotenv`
 - **Export (ONNX – แนะนำสำหรับ Pi 5)**: `onnx`, `onnxslim`, `onnxruntime-gpu`
-- **Export (NCNN – fallback)**: `ncnn`, `pnnx` *(ไม่รองรับ end2end ของ YOLO26 ดูหัวข้อที่ 5)*
+- **Export (NCNN – fallback)**: `ncnn`, `pnnx` _(ไม่รองรับ end2end ของ YOLO26 ดูหัวข้อที่ 5)_
 
 ### การตั้งค่า Environment Variables
 
@@ -43,7 +43,7 @@ cp .env.example .env
 
 ```bash
 # รันเพื่อโหลดข้อมูลลงเครื่อง
-python download_data.py
+uv run download_data.py
 ```
 
 สคริปต์จะดึงข้อมูลจากโปรเจค `dog-face-detection-0uxs8` ในรูปแบบ YOLO26 และบันทึกลงในโฟลเดอร์ `Dog-face-detection-X` โดยอัตโนมัติ
@@ -61,7 +61,7 @@ python download_data.py
 รันการเทรนด้วยคำสั่ง:
 
 ```bash
-python train.py
+uv run train.py
 ```
 
 **การตั้งค่าสำคัญ:**
@@ -101,7 +101,7 @@ YOLO26 รองรับ **end-to-end NMS-free inference** เป็น default
 
 ```bash
 # Export โมเดล best.pt → best.onnx
-python -c "from train import export_to_onnx; export_to_onnx()"
+python3 -c "from train import export_to_onnx; export_to_onnx()"
 ```
 
 หรือเรียกตรงๆ:
@@ -126,15 +126,15 @@ model.export(
 
 ผลลัพธ์ที่ได้ตรงตามมาตรฐาน YOLO26 end2end:
 
-| Property      | Value                                                         |
-| ------------- | ------------------------------------------------------------- |
-| Format        | ONNX                                                          |
-| Input         | `[1, 3, 640, 640]` float32 (RGB, normalized 0-1)              |
-| Output        | `[1, 300, 6]` float32                                         |
-| Layout        | `[x1, y1, x2, y2, confidence, class_id]`                      |
-| Box format    | `xyxy` (มุมซ้ายบน + มุมขวาล่าง)                                |
-| NMS           | ✅ Built-in — ไม่ต้อง post-process เอง                          |
-| Max detection | 300 ต่อภาพ                                                    |
+| Property      | Value                                            |
+| ------------- | ------------------------------------------------ |
+| Format        | ONNX                                             |
+| Input         | `[1, 3, 640, 640]` float32 (RGB, normalized 0-1) |
+| Output        | `[1, 300, 6]` float32                            |
+| Layout        | `[x1, y1, x2, y2, confidence, class_id]`         |
+| Box format    | `xyxy` (มุมซ้ายบน + มุมขวาล่าง)                  |
+| NMS           | ✅ Built-in — ไม่ต้อง post-process เอง           |
+| Max detection | 300 ต่อภาพ                                       |
 
 ### 5.3 Inference บน Raspberry Pi 5 ด้วย ONNX Runtime
 
