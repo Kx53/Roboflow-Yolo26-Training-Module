@@ -68,7 +68,7 @@ uv run train.py
 
 - `epochs`: 150 (พร้อม Early Stopping `patience=50`)
 - `imgsz`: 640 (ตรงกับ ONNX input `[1, 3, 640, 640]`)
-- `optimizer`: `auto` → เลือก **MuSGD** (YOLO26 native) หรือ **AdamW** อัตโนมัติตามขนาด run
+- `optimizer`: **MuSGD** (YOLO26 native; เหมาะกับ run ยาว/iteration เยอะ)
 - `lr0`: 0.001 (Fine-tuning learning rate ต่ำเพื่อรักษา pretrained weights)
 - `cos_lr`: เปิด Cosine LR schedule ให้ converge นุ่มนวล
 - `close_mosaic`: 10 (ปิด mosaic 10 epoch สุดท้าย — YOLO26 default recipe)
@@ -77,23 +77,33 @@ uv run train.py
 
 ---
 
-## 4. Latest Training Results (9 พ.ค. 2569)
+## 4. Latest Training Results (10 พ.ค. 2569)
 
-ผลลัพธ์ล่าสุดจากการเทรนเวอร์ชัน `yolo26n_v1`:
+ผลลัพธ์ล่าสุดจากการเทรน dataset version 10 ด้วย run `yolo26n_v1`:
 
-- **mAP50**: 0.985 (ความแม่นยำสูงมาก)
-- **mAP50-95**: 0.892
-- **Performance by Class**:
-  - `bowl_empty`: 0.993 mAP50
-  - `bowl_full`: 0.995 mAP50
-  - `yuri-dog`: 0.968 mAP50
-- **Inference Speed**: ~1.6ms (บน RTX 5060 Ti)
+- **Best epoch**: 127 (ใช้ `weights/best.pt` และ `weights/best.onnx`; ไม่ใช้ `last.pt`)
+- **Validation split**: 214 images / 183 instances
+  - Precision: 0.993
+  - Recall: 0.991
+  - mAP50: 0.992
+  - mAP50-95: 0.865
+- **Test split**: 109 images / 94 instances
+  - Precision: 0.997
+  - Recall: 1.000
+  - mAP50: 0.995
+  - mAP50-95: 0.837
+- **Performance by Class (validation mAP50-95)**:
+  - `bowl_empty`: 0.847
+  - `bowl_full`: 0.903
+  - `yuri-dog`: 0.846
+- **PyTorch inference speed**: ~0.7ms/image (RTX 5060 Ti)
+- **ONNX CPU test result**: mAP50 0.994, mAP50-95 0.837, ~17.9ms inference/image (Ryzen 5 7600; Pi 5 ควรทดสอบจริงอีกครั้ง)
 
 ---
 
 ## 5. Export to ONNX (NMS-free สำหรับ Raspberry Pi 5)
 
-YOLO26 รองรับ **end-to-end NMS-free inference** เป็น default — output ของ ONNX จะถูกกรองและจัดเรียงเรียบร้อยมาแล้วในรูป `(1, 300, 6)` โดยไม่ต้องเขียน Non-Maximum Suppression เอง
+YOLO26 รองรับ **end-to-end NMS-free inference** เป็น default — output ของ ONNX เป็น final detections ในรูป `(1, 300, 6)` แล้ว จึงไม่ต้องเขียน Non-Maximum Suppression เอง แต่ยังควร filter ด้วย confidence threshold ตามงานที่ใช้งานจริง
 
 ### 5.1 รัน Export Script
 
@@ -101,7 +111,7 @@ YOLO26 รองรับ **end-to-end NMS-free inference** เป็น default
 
 ```bash
 # Export โมเดล best.pt → best.onnx
-python3 -c "from train import export_to_onnx; export_to_onnx()"
+uv run python3 -c "from train import export_to_onnx; export_to_onnx()"
 ```
 
 หรือเรียกตรงๆ:
@@ -133,7 +143,7 @@ model.export(
 | Output        | `[1, 300, 6]` float32                            |
 | Layout        | `[x1, y1, x2, y2, confidence, class_id]`         |
 | Box format    | `xyxy` (มุมซ้ายบน + มุมขวาล่าง)                  |
-| NMS           | ✅ Built-in — ไม่ต้อง post-process เอง           |
+| NMS           | NMS-free — ไม่ต้องทำ NMS เอง; filter ด้วย confidence threshold |
 | Max detection | 300 ต่อภาพ                                       |
 
 ### 5.3 Inference บน Raspberry Pi 5 ด้วย ONNX Runtime
